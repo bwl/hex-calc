@@ -1,3 +1,5 @@
+YAML = require('yamljs');
+
 const edge_length = 72.169   // a
 const long_diagonal = 144.338 // d
 const short_diagonal = 125  // d2
@@ -86,7 +88,7 @@ function regionCollection(hexMatrix) {
   
   hexMatrix.map((hex,index) => {
     const region_name = `test_${index}`;
-    regions[region_name] = regionObject(hex);
+    regions[region_name] = regionObject(hex, region_name);
   })
 
   return {
@@ -95,12 +97,15 @@ function regionCollection(hexMatrix) {
 
 }  
 
-function regionObject(hexSet) {
+function regionObject(hexSet, name) {
 
+  
   return {
     members: {},
     members: {},
-    flags: {},
+    flags: {
+      greeting: `Enter Region - ${name}`
+    },
     owners: {},
     type: 'poly2d',
     priority: 0,
@@ -136,7 +141,7 @@ function regionObject(hexSet) {
 }
 
 function makeYaml(regionCollection) {
-  yamlString = YAML.stringify(regionCollection, 2, 2);
+  yamlString = YAML.stringify(regionCollection, 2);
 
   return yamlString;
 }
