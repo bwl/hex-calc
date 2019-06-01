@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "fs": "^0.0.1-security",
     "yamljs": "^0.3.0"
   },
   "name": "hex-calc",
