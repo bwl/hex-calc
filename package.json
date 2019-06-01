@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "yamljs": "^0.3.0"
+  },
+  "name": "hex-calc",
+  "version": "1.0.0",
+  "description": "Create worldguard config with a ton of hex regions",
+  "main": "index.js",
+  "repository": "git@github.com:bwl/hex-calc.git",
+  "author": "bwl <benlundquist@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
