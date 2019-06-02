@@ -92,52 +92,28 @@ function addIndex(index) {
   snowbound.push(index);
 }
 
-
-
-
-// addRange(0,149);
-// addRange(168,172);
-// addRange(192,196);
-// addRange(216,220);
-// addRange(240,245);
-// addRange(264,268);
-// addRange(288,289);
-// addRange(291,293);
-// addRange(312,313);
-// addIndex(315);
-// addIndex(319);
-// addIndex(343);
-
-
-// addRange(200,300);
-
-console.log(snowbound);
-
 const edge_length = 74   // a
 const edge_length_hack = 76  // a
 
 // d = 2 * a
 const long_diagonal = 2 * edge_length
 
-console.log('long diagonal', long_diagonal)
 // d2 = √3 * a
 const short_diagonal = Math.sqrt(3) * edge_length
 //const short_diagonal = 133.36791218280354;
 
-console.log('short_diagonal', short_diagonal)
 
 // offset = √( 4 * a² - c² ) / 4
 const tri_short = long_diagonal / 3
 const tri_long = edge_length
 
-console.log('tri_short', tri_short)
-console.log('tri_long', tri_long)
-
 const offset = 0.25 * (Math.sqrt(4 * Math.pow(tri_long, 2) - Math.pow(tri_short, 2)))
 
-console.log('offset', offset)
 
-const hexM = hexMatrix([73,52], 24, 96)
+const hexM = hexMatrix([73,52], 26, 92)
+
+
+const warpCollect = warpCollection(hexM);
 const regionCollect = regionCollection(hexM);
 const myYaml = makeYaml(regionCollect)
 
@@ -261,6 +237,45 @@ function regionCollection(hexMatrix) {
 
 }  
 
+function warpCollection(hexMatrix) {
+
+  let warps = [];
+  
+
+
+  hexMatrix.map((hex,index) => {
+    const region_name = `test_${index}`;
+    warps.push(warpObject(hex, region_name));
+
+  })
+
+  return warps;
+
+}
+
+
+function warpObject(hexSet, name) {
+
+  const destZ = hexSet[0][1] + (hexSet[5][1] - hexSet[0][1] / 2);
+  const destX = hexSet[0][0] + (hexSet[2][0] - hexSet[0][0] / 2);
+
+
+  const warp = {
+    name:name,
+    world:'hex',
+    uuid:'76406d5a-c226-4a10-97bc-37f3549a37e2',
+    x: destX,
+    y: '128',
+    z: destZ,
+    yaw:'0',
+    pitch:'0'
+  }
+
+  return warp;
+
+}
+
+
 function regionObject(hexSet, name, owners) {
 
   
@@ -313,3 +328,18 @@ function makeYaml(regionCollection) {
   return yamlString;
 }
 
+function makeCSV(warpCollect) {
+  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+  const csvWriter = createCsvWriter({
+    path: 'warps.csv',
+    header: ['name', 'world', 'uuid', 'x', 'y', 'z', 'yaw', 'pitch']
+  });
+
+  csvWriter.writeRecords(warpCollect).then(() => {
+        console.log('...Done');
+  });
+
+}
+
+
+makeCSV(warpCollect);
