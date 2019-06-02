@@ -11,6 +11,7 @@
   "author": "bwl <benlundquist@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "push": "scp regions.yml minecraft@cheeseburgervacation.com:hex/plugins/WorldGuard/worlds/hex/"
   }
 }
