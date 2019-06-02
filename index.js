@@ -1,6 +1,38 @@
 YAML = require('yamljs');
 const fs = require('fs');
 
+const blacklist = [];
+
+
+function addRange(start,finish) {
+  for (let index = start; index <= finish; index++) {
+    blacklist.push(index);
+  }
+}
+
+function addIndex(index) {
+  blacklist.push(index);
+}
+
+
+addRange(0,149);
+addRange(168,172);
+addRange(192,196);
+addRange(216,220);
+addRange(240,245);
+addRange(264,268);
+addRange(288,289);
+addRange(291,293);
+addRange(312,313);
+addIndex(315);
+addIndex(319);
+addIndex(343);
+
+
+// addRange(200,300);
+
+console.log(blacklist);
+
 const edge_length = 74   // a
 const edge_length_hack = 76  // a
 
@@ -130,9 +162,15 @@ function regionCollection(hexMatrix) {
 
   let regions = {};
   
+  console.log(blacklist);
+  console.log(blacklist.indexOf(0))
+
   hexMatrix.map((hex,index) => {
     const region_name = `test_${index}`;
-    regions[region_name] = regionObject(hex, region_name);
+
+    if (blacklist.indexOf(index) === -1) {
+      regions[region_name] = regionObject(hex, region_name);
+    };
   })
 
   return {
