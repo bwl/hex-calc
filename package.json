@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "csv-writer": "^1.3.0",
     "fs": "^0.0.1-security",
     "yamljs": "^0.3.0"
   },
@@ -12,6 +13,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "push": "scp regions.yml minecraft@cheeseburgervacation.com:hex/plugins/WorldGuard/worlds/hex/"
+    "pushregions": "scp regions.yml minecraft@cheeseburgervacation.com:hex/plugins/WorldGuard/worlds/hex/",
+    "pushwarps": "scp warps.csv minecraft@cheeseburgervacation.com:hex/plugins/CommandBook/",
+    "all": "yarn start && yarn pushregions && yarn pushwarps"
   }
 }
