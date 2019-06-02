@@ -1,37 +1,117 @@
 YAML = require('yamljs');
 const fs = require('fs');
 
-const blacklist = [];
+const snowbound = [
+
+  150,
+  173,
+  197,
+  221,
+  246,
+  269,
+  290,
+  294,
+  314,
+  316,
+  317,
+  338,
+  339,
+  341,
+  342,
+  363,
+  365,
+  387,
+  389,
+  390,
+  411,
+  412,
+  413,
+  435,
+  436,
+  438,
+  461,
+  483,
+  484,
+  506,
+  507,
+  531,
+  532,
+  555,
+  580,
+174,
+175,
+199,
+247,
+295,
+222,
+270,
+318,
+366,
+
+460,
+892,
+844,
+796,
+748,
+700,
+652,
+604,
+556,
+508,
+987,
+964,
+916,
+891,
+868,
+820,
+772,
+724,
+676,
+651,
+699,
+747,
+723,
+675,
+698,
+
+
+
+
+
+
+];
 
 
 function addRange(start,finish) {
   for (let index = start; index <= finish; index++) {
-    blacklist.push(index);
+    snowbound.push(index);
   }
 }
 
 function addIndex(index) {
-  blacklist.push(index);
+  snowbound.push(index);
 }
 
 
-addRange(0,149);
-addRange(168,172);
-addRange(192,196);
-addRange(216,220);
-addRange(240,245);
-addRange(264,268);
-addRange(288,289);
-addRange(291,293);
-addRange(312,313);
-addIndex(315);
-addIndex(319);
-addIndex(343);
+
+
+// addRange(0,149);
+// addRange(168,172);
+// addRange(192,196);
+// addRange(216,220);
+// addRange(240,245);
+// addRange(264,268);
+// addRange(288,289);
+// addRange(291,293);
+// addRange(312,313);
+// addIndex(315);
+// addIndex(319);
+// addIndex(343);
 
 
 // addRange(200,300);
 
-console.log(blacklist);
+console.log(snowbound);
 
 const edge_length = 74   // a
 const edge_length_hack = 76  // a
@@ -162,15 +242,17 @@ function regionCollection(hexMatrix) {
 
   let regions = {};
   
-  console.log(blacklist);
-  console.log(blacklist.indexOf(0))
-
   hexMatrix.map((hex,index) => {
     const region_name = `test_${index}`;
 
-    if (blacklist.indexOf(index) === -1) {
-      regions[region_name] = regionObject(hex, region_name);
-    };
+    let owners = ''
+
+    if (snowbound.indexOf(index) != -1) {
+      owners = 'snowbound'
+    }
+
+    regions[region_name] = regionObject(hex, region_name, owners);
+
   })
 
   return {
@@ -179,7 +261,7 @@ function regionCollection(hexMatrix) {
 
 }  
 
-function regionObject(hexSet, name) {
+function regionObject(hexSet, name, owners) {
 
   
   return {
@@ -189,7 +271,9 @@ function regionObject(hexSet, name) {
       greeting: `Enter - ${name}`,
       farewell: `Leave - ${name}`
     },
-    owners: {},
+    owners: {
+      groups: [owners]
+    },
     type: 'poly2d',
     priority: 0,
     'max-y': 256,
