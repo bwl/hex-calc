@@ -1,41 +1,79 @@
 YAML = require('yamljs');
+const fs = require('fs');
 
-const edge_length = 72.169   // a
-const long_diagonal = 144.338 // d
-const short_diagonal = 125  // d2
+const edge_length = 74   // a
+const edge_length_hack = 76  // a
+
+// d = 2 * a
+const long_diagonal = 2 * edge_length
+
+console.log('long diagonal', long_diagonal)
+// d2 = √3 * a
+const short_diagonal = Math.sqrt(3) * edge_length
+//const short_diagonal = 133.36791218280354;
+
+console.log('short_diagonal', short_diagonal)
+
+// offset = √( 4 * a² - c² ) / 4
 const tri_short = long_diagonal / 3
 const tri_long = edge_length
-const offset = 36.085
+
+console.log('tri_short', tri_short)
+console.log('tri_long', tri_long)
+
+const offset = 0.25 * (Math.sqrt(4 * Math.pow(tri_long, 2) - Math.pow(tri_short, 2)))
+
+console.log('offset', offset)
+
+const hexM = hexMatrix([73,52], 24, 96)
+const regionCollect = regionCollection(hexM);
+const myYaml = makeYaml(regionCollect)
+
+fs.writeFile("regions.yml", myYaml, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+}); 
 
 function hexPoints(x, y) {
+
+  const a = [x, y]
+  const b = [x + short_diagonal / 2, y - offset]
+  const c = [x + short_diagonal, y]
+  const d = [x + short_diagonal, y + edge_length_hack]
+  const e = [x + short_diagonal / 2, y + edge_length_hack + offset]
+  const f = [x, y + edge_length_hack]
+  return [a,b,c,d,e,f]
+
+}
+
+function hexPointsRounded(x, y) {
+
   const a = [Math.round(x), Math.round(y)]
-  const b = [Math.round(x + short_diagonal / 2), Math.round(y + offset)]
+  const b = [Math.round(x + short_diagonal / 2), Math.round(y - offset)]
   const c = [Math.round(x + short_diagonal), Math.round(y)]
   const d = [Math.round(x + short_diagonal), Math.round(y + edge_length)]
-  const e = [Math.round(x + short_diagonal / 2), Math.round(y - offset)]
+  const e = [Math.round(x + short_diagonal / 2), Math.round(y + edge_length + offset)]
   const f = [Math.round(x), Math.round(y + edge_length)]
   return [a,b,c,d,e,f]
 
 }
 
-function new_a(a) {
-  const x = a[0]
-  const y = a[1] + short_diagonal
-  return [x,y]
+function hexMatrix(hexPoint, colSize, rowSize) {
 
-}
-
-function hexMatrix(hexPoint, rowSize, colSize) {
-
-  let hexRows = []
+  let hexColumns = []
   let hexMatrix = []
 
-  for (let count = 0; count < colSize; count++) {
-    hexRows.push(hexRow([hexPoint[0],hexPoint[1] + long_diagonal * count], rowSize))
+  for (let count = 0; count < rowSize; count++) {
+
+    const startY = hexPoint[1] + ((edge_length_hack + offset) * (count % 2) + 1 )
+    hexColumns.push(hexColumn([hexPoint[0] + ((short_diagonal / 2) * count), startY], colSize))
   }
 
-  hexRows.map(row => {
-    row.map(hexPoints => {
+  hexColumns.map(column => {
+    column.map(hexPoints => {
       hexMatrix.push(hexPoints);
     })
   })
@@ -43,15 +81,21 @@ function hexMatrix(hexPoint, rowSize, colSize) {
   return hexMatrix
 }
 
-function hexRow(hexPoint, size) {
+function hexColumn(hexPoint, rowSize) {
+
+  // for a given starting hexpoint
+  // repeat SIZE times
+  // return a row of hexes
 
   let row = []
 
   let a = hexPoint
 
-  for (let count = 0; count < size; count++) {
-    const hex = hexPoints(Math.round(a[0]),Math.round(a[1]))
-    a = new_a(a)
+  for (let count = 0; count < rowSize; count++) {
+
+    let newY = a[1] + ((offset + offset + edge_length_hack + edge_length_hack) * count);
+
+    const hex = hexPoints(a[0], newY)
     row.push(hex)
   }
 
@@ -104,7 +148,8 @@ function regionObject(hexSet, name) {
     members: {},
     members: {},
     flags: {
-      greeting: `Enter Region - ${name}`
+      greeting: `Enter - ${name}`,
+      farewell: `Leave - ${name}`
     },
     owners: {},
     type: 'poly2d',
@@ -113,28 +158,28 @@ function regionObject(hexSet, name) {
     'min-y': 0,
     points: [
       {
-        x: hexSet[0][0],
-        z: hexSet[0][1]
+        x: Math.round(hexSet[0][0]),
+        z: Math.round(hexSet[0][1])
       },
       { 
-        x: hexSet[1][0],
-        z: hexSet[1][1]
+        x: Math.round(hexSet[1][0]),
+        z: Math.round(hexSet[1][1])
       },
       { 
-        x: hexSet[2][0],
-        z: hexSet[2][1]
+        x: Math.round(hexSet[2][0]),
+        z: Math.round(hexSet[2][1])
       },
       {
-        x: hexSet[3][0],
-        z: hexSet[3][1]
+        x: Math.round(hexSet[3][0]),
+        z: Math.round(hexSet[3][1])
       },
       { 
-        x: hexSet[4][0],
-        z: hexSet[4][1]
+        x: Math.round(hexSet[4][0]),
+        z: Math.round(hexSet[4][1])
       },
       { 
-        x: hexSet[5][0],
-        z: hexSet[5][1]
+        x: Math.round(hexSet[5][0]),
+        z: Math.round(hexSet[5][1])
       },
     ]
   }
@@ -146,12 +191,3 @@ function makeYaml(regionCollection) {
   return yamlString;
 }
 
-
-
-
-const hexM = hexMatrix([0,0], 4, 3)
-const regionCollect = regionCollection(hexM);
-
-console.log( makeYaml(regionCollect) )
-//console.log(hexMatrix([0,0], 48, 56))
-//console.log(new_a([0,0]));
