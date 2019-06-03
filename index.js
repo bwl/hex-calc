@@ -3,82 +3,113 @@ const fs = require('fs');
 
 const snowbound = [
 
-  150,
-  173,
-  197,
-  221,
-  246,
-  269,
-  290,
-  294,
   314,
-  316,
-  317,
-  338,
-  339,
-  341,
+  366,
+  340,
+  548,
+  756,
+  367,
+  419,
+  471,
+  523,
+  575,
+  731,
+  783,
+  393,
+  445,
+  549,
+  601,
+  705,
+  757,
+  809,
+  472,
+  524,
+  576,
+  628,
+  732,
+  784,
+  836,
+  888,
+  940,
+  965,
+  992,
+  1044,
+  1069,
   342,
-  363,
-  365,
-  387,
-  389,
-  390,
-  411,
-  412,
-  413,
-  435,
-  436,
-  438,
-  461,
-  483,
-  484,
-  506,
-  507,
-  531,
-  532,
-  555,
-  580,
-174,
-175,
-199,
-247,
-295,
-222,
-270,
-318,
-366,
-
-460,
-892,
-844,
-796,
-748,
-700,
-652,
-604,
-556,
-508,
-987,
-964,
-916,
-891,
-868,
-820,
-772,
-724,
-676,
-651,
-699,
-747,
-723,
-675,
-698,
-
-
-
-
-
-
+  446,
+  498,
+  550,
+  602,
+  654,
+  706,
+  758,
+  810,
+  862,
+  914,
+  966,
+  213,
+  369,
+  421,
+  473,
+  525,
+  577,
+  629,
+  681,
+  733,
+  785,
+  889,
+  941,
+  187,
+  239,
+  291,
+  343,
+  395,
+  447,
+  499,
+  551,
+  603,
+  655,
+  707,
+  759,
+  811,
+  863,
+  915,
+  967,
+  1019,
+  162,
+  266,
+  318,
+  370,
+  422,
+  474,
+  526,
+  578,
+  630,
+  682,
+  734,
+  786,
+  838,
+  890,
+  942,
+  994,
+  1046,
+  188,
+  240,
+  292,
+  344,
+  396,
+  448,
+  500,
+  552,
+  604,
+  656,
+  708,
+  760,
+  812,
+  864,
+  916,
+  968,
+  1020,
 ];
 
 
@@ -133,18 +164,6 @@ function hexPoints(x, y) {
   const d = [x + short_diagonal, y + edge_length_hack]
   const e = [x + short_diagonal / 2, y + edge_length_hack + offset]
   const f = [x, y + edge_length_hack]
-  return [a,b,c,d,e,f]
-
-}
-
-function hexPointsRounded(x, y) {
-
-  const a = [Math.round(x), Math.round(y)]
-  const b = [Math.round(x + short_diagonal / 2), Math.round(y - offset)]
-  const c = [Math.round(x + short_diagonal), Math.round(y)]
-  const d = [Math.round(x + short_diagonal), Math.round(y + edge_length)]
-  const e = [Math.round(x + short_diagonal / 2), Math.round(y + edge_length + offset)]
-  const f = [Math.round(x), Math.round(y + edge_length)]
   return [a,b,c,d,e,f]
 
 }
@@ -217,14 +236,18 @@ function regionName() {
 function regionCollection(hexMatrix) {
 
   let regions = {};
-  
+
+  let snowbound_index = 1;
+
   hexMatrix.map((hex,index) => {
-    const region_name = `test_${index}`;
+    let region_name = `test_${index}`;
 
     let owners = ''
 
     if (snowbound.indexOf(index) != -1) {
       owners = 'snowbound'
+      region_name = `Snowbound ${snowbound_index} (i:${index})`
+      snowbound_index++;
     }
 
     regions[region_name] = regionObject(hex, region_name, owners);
