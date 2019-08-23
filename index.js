@@ -1,10 +1,10 @@
-YAML = require("yamljs");
-const fs = require("fs");
+YAML = require('yamljs');
+const fs = require('fs');
 
 // Hex point calculation
 // Used this resource as my primary guide:
 // https://rechneronline.de/pi/hexagon.php
-// 
+//
 // The edge_length_hack forces a bit of vertical distortion in the hexes
 // Making them slightly taller was needed in order to fit the grid of the map
 // Between me and the map author i'm honestly not sure whose math is wrong!
@@ -24,12 +24,12 @@ const offset = 0.25 * Math.sqrt(4 * Math.pow(tri_long, 2) - Math.pow(tri_short, 
 
 // for a given point in space create the cooresponding 5 points
 // this returns a fixed size hexagon based on the constants above
-//              
-//       E      
-//     F   D    
+//
+//       E
+//     F   D
 //     A   C         Hex Point Layout
-//       B      
-//              
+//       B
+//
 function hexPoints(x, y) {
     const a = [ x, y ];
     const b = [ x + short_diagonal / 2, y - offset ];
@@ -41,16 +41,15 @@ function hexPoints(x, y) {
     return [ a, b, c, d, e, f ];
 }
 
-
 // create a vertical column of hexes of columnSize height
-//    _   
-//   / \  
-//   \_/  
+//    _
+//   / \
+//   \_/
 //            The big amount of space between hexs is needed
 //    _       to allow for the adjecent columns to fit in correctly
-//   / \  
-//   \_/  
-//        
+//   / \
+//   \_/
+//
 function hexColumn(hexPoint, columnSize) {
     let column = [];
     let a = hexPoint;
@@ -65,11 +64,9 @@ function hexColumn(hexPoint, columnSize) {
     return column;
 }
 
-
 // create 92 columns - each 26 hexs tall
 // start the grid at block x73 y52
 const hexM = hexMatrix([ 73, 52 ], 26, 92);
-
 
 //  create rowSize number of hexColumns
 //  each hexColumn is colSize hexs tall
@@ -87,8 +84,8 @@ function hexMatrix(hexPoint, colSize, rowSize) {
         hexColumns.push(hexColumn([ hexPoint[0] + short_diagonal / 2 * count, startY ], colSize));
     }
 
-    hexColumns.map(column => {
-        column.map(hexPoints => {
+    hexColumns.map((column) => {
+        column.map((hexPoints) => {
             hexMatrix.push(hexPoints);
         });
     });
@@ -96,34 +93,29 @@ function hexMatrix(hexPoint, colSize, rowSize) {
     return hexMatrix;
 }
 
-
-
-
 //  now that we have an array of hex ids we can
 //  add identification traits with simple array lists
-
 
 // region set definitions
 // each set returns 1 array of integer hex ids
 
-
 // nortwest snow area
-const snowbound = require("./sets/snowbound");
+const snowbound = require('./sets/snowbound');
 
 // northeast forest area
-const timber = require("./sets/timber");
+const timber = require('./sets/timber');
 
 // southern desert area
-const redsun = require("./sets/redsun");
+const redsun = require('./sets/redsun');
 
 // central farmland area
-const heartland = require("./sets/heartland");
+const heartland = require('./sets/heartland');
+
+// lakes throughout the map
+const lake = require('./sets/lake');
 
 // cursed hex in south east corner
-const havoc = [
-    1918
-];
-
+const havoc = [ 1918 ];
 
 // send our collection of hexes through world guard region formatter
 // each hex is compared to above lists and returned with traits as assigned
@@ -131,11 +123,40 @@ const havoc = [
 const regionCollect = regionCollection(hexM);
 
 
+snowbound_region = {
+  parent: 'hex',
+  members: {},
+  flags
+}
+
+// snowbound:
+// parent: hex
+// members: {}
+// flags:
+// give-effects: [FIRE_RESISTANCE 1]
+// greeting-title: Snowbound
+// owners: {}
+// type: global
+// priority: 0
+
+// hex:
+// members:
+// groups: [default , admin]
+// flags: { keep-inventory: true }
+// owners: {}
+// type: global
+// priority: 10
+
+function globalRegion(name, config) {
+
+}
+
 
 // Atomic region object
 // used by region collection to fill each hex entry
 function regionObject(hexSet, name, owners) {
     return {
+        parent: `${owners}`,
         members: {},
         flags: {
             greeting: `Enter - ${name}`,
@@ -144,20 +165,20 @@ function regionObject(hexSet, name, owners) {
         owners: {
             groups: [ owners ]
         },
-        type: "poly2d",
+        type: 'poly2d',
         priority: 0,
-        "max-y": 256,
-        "min-y": 0,
+        'max-y': 256,
+        'min-y': 0,
         points: [
             {
                 x: Math.round(hexSet[0][0]),
                 z: Math.round(hexSet[0][1])
             },
-            { 
+            {
                 x: Math.round(hexSet[1][0]),
                 z: Math.round(hexSet[1][1])
             },
-            { 
+            {
                 x: Math.round(hexSet[2][0]),
                 z: Math.round(hexSet[2][1])
             },
@@ -165,11 +186,11 @@ function regionObject(hexSet, name, owners) {
                 x: Math.round(hexSet[3][0]),
                 z: Math.round(hexSet[3][1])
             },
-            { 
+            {
                 x: Math.round(hexSet[4][0]),
                 z: Math.round(hexSet[4][1])
             },
-            { 
+            {
                 x: Math.round(hexSet[5][0]),
                 z: Math.round(hexSet[5][1])
             }
@@ -191,48 +212,51 @@ function regionCollection(hexMatrix) {
 
     let heartland_index = 1;
 
-    hexMatrix.map((hex, index) => {
-        let region_name = "wild";
+    let lake_index = 1;
 
-        let owners = "";
+    hexMatrix.map((hex, index) => {
+        let owners = '';
+        let region_name = `ocean_${index}`;
 
         if (snowbound.indexOf(index) !== -1) {
-            owners = "snowbound";
+            owners = 'snowbound';
             region_name = `snowbound_${snowbound_index}_${index}`;
             snowbound_index = snowbound_index + 1;
         }
         if (redsun.indexOf(index) !== -1) {
-            owners = "redsun";
+            owners = 'redsun';
             region_name = `redsun_${redsun_index}_${index}`;
             redsun_index = redsun_index + 1;
         }
         if (timber.indexOf(index) !== -1) {
-            owners = "timber";
+            owners = 'timber';
             region_name = `timber_${timber_index}_${index}`;
             timber_index = timber_index + 1;
         }
 
         if (heartland.indexOf(index) !== -1) {
-            owners = "heartland";
+            owners = 'heartland';
             region_name = `heartland_${heartland_index}_${index}`;
             heartland_index = heartland_index + 1;
         }
-        // havoc
+
+        if (lake.indexOf(index) !== -1) {
+            owners = 'lake';
+            region_name = `lake_${index}`;
+        }
+
         if (index === 1918) {
-            owners = "havoc";
+            owners = 'havoc';
             region_name = `havoc_${index}`;
         }
 
-        if (region_name !== "wild") {
-            regions[region_name] = regionObject(hex, region_name, owners);
-        }
+        regions[region_name] = regionObject(hex, region_name, owners);
     });
 
     return {
         regions: regions
     };
-}  
-
+}
 
 //  given our hex matrix
 //  process all hexes against area lists
@@ -246,13 +270,13 @@ function warpObject(hexSet, name) {
 
     const warp = {
         name: name,
-        world: "hex",
-        uuid: "76406d5a-c226-4a10-97bc-37f3549a37e2",
+        world: 'hex',
+        uuid: '76406d5a-c226-4a10-97bc-37f3549a37e2',
         x: destX,
-        y: "192",
+        y: '192',
         z: destZ,
-        yaw: "0",
-        pitch: "0"
+        yaw: '0',
+        pitch: '0'
     };
 
     return warp;
@@ -270,38 +294,38 @@ function warpCollection(hexMatrix) {
     let heartland_index = 1;
 
     hexMatrix.map((hex, index) => {
-        let region_name = "wild";
+        let region_name = 'wild';
 
-        let owners = "";
+        let owners = '';
 
         if (snowbound.indexOf(index) !== -1) {
-            owners = "snowbound";
+            owners = 'snowbound';
             region_name = `snowbound_${snowbound_index}_${index}`;
             snowbound_index = snowbound_index + 1;
         }
         if (redsun.indexOf(index) !== -1) {
-            owners = "redsun";
+            owners = 'redsun';
             region_name = `redsun_${redsun_index}_${index}`;
             redsun_index = redsun_index + 1;
         }
         if (timber.indexOf(index) !== -1) {
-            owners = "timber";
+            owners = 'timber';
             region_name = `timber_${timber_index}_${index}`;
             timber_index = timber_index + 1;
         }
 
         if (heartland.indexOf(index) !== -1) {
-            owners = "heartland";
+            owners = 'heartland';
             region_name = `heartland_${heartland_index}_${index}`;
             heartland_index = heartland_index + 1;
         }
         // havoc
         if (index === 1918) {
-            owners = "havoc";
+            owners = 'havoc';
             region_name = `havoc_${index}`;
         }
 
-        if (region_name !== "wild") {
+        if (region_name !== 'wild') {
             warps.push(warpObject(hex, region_name));
         }
     });
@@ -309,15 +333,11 @@ function warpCollection(hexMatrix) {
     return warps;
 }
 
-
-
-
 // convert given object into yaml string using 2 space indentation
 function makeYaml(object) {
     yamlString = YAML.stringify(object, 2);
     return yamlString;
 }
-
 
 // write given yamlString to file at filename location
 function writeYaml(fileName, yamlString) {
@@ -325,37 +345,33 @@ function writeYaml(fileName, yamlString) {
         if (err) {
             return console.log(err);
         }
-        
-        console.log("regions.yml created and saved.");
+
+        console.log(`${fileName} created and saved.`);
     });
 }
 
 // write given array of warps to warps.csv file
 function makeCSV(warpCollect) {
-    const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+    const createCsvWriter = require('csv-writer').createObjectCsvWriter;
     const csvWriter = createCsvWriter({
-        path: "warps.csv",
-        header: [ "name", "world", "uuid", "x", "y", "z", "yaw", "pitch" ]
+        path: 'warps.csv',
+        header: [ 'name', 'world', 'uuid', 'x', 'y', 'z', 'yaw', 'pitch' ]
     });
-    
+
     csvWriter.writeRecords(warpCollect).then(() => {
-        console.log("...Done");
+        console.log('...Done');
     });
 }
-
 
 //  given constructed regions object
 //  return yaml representation as string
 const regionsYaml = makeYaml(regionCollect);
 
-
 //  write regions file
 writeYaml('regions.yml', regionsYaml);
 
-
 // write warp file
 makeCSV(warpCollect);
-
 
 // print final success message
 console.log('Hex Calc Completed.');
