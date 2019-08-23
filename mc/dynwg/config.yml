@@ -1,0 +1,65 @@
+# Dynmap-WorldGuard configuration
+update:
+  period: 300
+layer:
+  name: WorldGuard
+  hidebydefault: false
+  layerprio: 0
+  minzoom: 0
+use3dregions: false
+infowindow: <div class=\"infowindow\"> <button onClick="function test(){ console.log('%regionname%')  }
+  test(); return false;">Add index to list</button> <br /><span style=\"font-size:16px;">%regionname%
+  </span><br /> Owners <span style="font-weight:bold;">%playerowners%<br/>%groupowners%</span><br/>Members
+  <span style="font-weight:bold;">%playermembers%<br/>%groupmembers%</span><br/>Flags<br
+  /><span style="font-weight:bold;">%flags%</span></div>
+regionstyle:
+  strokeColor: '#FF0000'
+  strokeOpacity: 0.1
+  strokeWeight: 1
+  fillColor: '#000000'
+  fillOpacity: 0.05
+  unownedStrokeColor: '#0c0547'
+visibleregions: []
+hiddenregions: []
+custstyle:
+  customregion1:
+    strokeColor: '#00FF00'
+ownerstyle:
+  snowbound:
+    strokeColor: '#7AADDD'
+    strokeOpacity: 0.6
+    fillColor: '#B0D0E8'
+    fillOpacity: 0.2
+    strokeWeight: 2
+  timber:
+    strokeColor: '#37c694'
+    strokeOpacity: 0.5
+    fillColor: '#13821a'
+    fillOpacity: 0.2
+    strokeWeight: 2
+  redsun:
+    strokeColor: '#f442b6'
+    strokeOpacity: 0.3
+    fillColor: '#CE2353'
+    fillOpacity: 0.1
+    strokeWeight: 2
+  heartland:
+    strokeColor: '#ffffff'
+    strokeOpacity: 0.4
+    fillColor: '#84cc78'
+    fillOpacity: 0.2
+    strokeWeight: 2
+  lake:
+    strokeColor: '#5180cc'
+    strokeOpacity: 0.4
+    fillColor: '#2073b2'
+    fillOpacity: 0.4
+    strokeWeight: 2
+  havoc:
+    strokeColor: '#f442bf'
+    strokeOpacity: 0.5
+    fillColor: '#9686ef'
+    fillOpacity: 0.2
+    strokeWeight: 2
+maxdepth: 16
+updates-per-tick: 20

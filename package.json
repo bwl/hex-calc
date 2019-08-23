@@ -15,6 +15,7 @@
     "start": "node index.js",
     "pushregions": "scp regions.yml minecraft@cheeseburgervacation.com:hex/plugins/WorldGuard/worlds/hex/",
     "pushwarps": "scp warps.csv minecraft@cheeseburgervacation.com:hex/plugins/CommandBook/",
-    "all": "yarn start && yarn pushregions && yarn pushwarps"
+    "pushdynwg": "scp mc/dynwg/config.yml minecraft@cheeseburgervacation.com:hex/plugins/Dynmap-WorldGuard/",
+    "all": "yarn start && yarn pushregions && yarn pushwarps && yarn pushdynwg"
   }
 }
